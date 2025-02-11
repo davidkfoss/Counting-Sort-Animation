@@ -10,7 +10,8 @@ class CountingSortAnimation(Scene):
         # Create title
         title = Text("Counting Sort Visualization").scale(0.8)
         title.to_edge(UP)
-        self.play(Write(title))
+        self.play(Write(title), run_time=1)
+        self.wait(0.5)
 
         # Create initial array visualization
         initial_squares = VGroup(*[
@@ -32,10 +33,15 @@ class CountingSortAnimation(Scene):
 
         self.play(
             Create(initial_squares),
-            Write(initial_nums),
-            Write(init_label)
+            run_time=1
         )
-        self.wait()
+        self.wait(0.3)
+        self.play(
+            Write(initial_nums),
+            Write(init_label),
+            run_time=1
+        )
+        self.wait(1)
 
         # Create count array
         count_squares = VGroup(*[
@@ -62,11 +68,16 @@ class CountingSortAnimation(Scene):
 
         self.play(
             Create(count_squares),
+            run_time=1
+        )
+        self.wait(0.3)
+        self.play(
             Write(count_nums),
             Write(count_indices),
-            Write(count_label)
+            Write(count_label),
+            run_time=1
         )
-        self.wait()
+        self.wait(0.5)
 
         # Update count array
         counts = [0] * (max_val + 1)
@@ -74,12 +85,20 @@ class CountingSortAnimation(Scene):
             counts[num] += 1
             new_num = Text(str(counts[num]))
             new_num.move_to(count_nums[num])
+
+            self.play(
+                Flash(initial_nums[numbers.index(num)]),
+                run_time=0.3
+            )
+            self.wait(0.2)
+
             self.play(
                 Transform(count_nums[num], new_num),
-                Flash(initial_nums[numbers.index(num)]),
-                run_time=0.5
+                run_time=0.3
             )
-        self.wait()
+            self.wait(0.3)
+
+        self.wait(0.5)
 
         # Create output array
         output = [0] * len(numbers)
@@ -102,8 +121,10 @@ class CountingSortAnimation(Scene):
 
         self.play(
             Create(output_squares),
-            Write(output_label)
+            Write(output_label),
+            run_time=1
         )
+        self.wait(0.5)
 
         # Fill output array
         idx = len(numbers) - 1
@@ -111,15 +132,25 @@ class CountingSortAnimation(Scene):
             for _ in range(counts[i]):
                 new_num = Text(str(i))
                 new_num.move_to(output_squares[idx])
+
+                self.play(
+                    Flash(count_squares[i]),
+                    run_time=0.3
+                )
+                self.wait(0.2)
+
                 self.play(
                     Transform(output_nums[idx], new_num),
-                    Flash(count_squares[i]),
-                    run_time=0.5
+                    run_time=0.3
                 )
+                self.wait(0.2)
                 idx -= 1
 
+            if counts[i] > 0:
+                self.wait(0.3)
+
         # Final pause
-        self.wait(2)
+        self.wait(1.5)
 
 
 if __name__ == "__main__":
